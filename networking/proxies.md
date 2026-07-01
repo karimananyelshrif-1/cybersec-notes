@@ -47,8 +47,8 @@ The client must configure it manually.
 
 ## OSI Layer
 
-Layer 7 (Application Layer) -> Burp Suite proxy 
-Layer 5 (Session Layer) -> SOCKS Proxy
+- Layer 7 (Application Layer) -> Burp Suite proxy 
+- Layer 5 (Session Layer) -> SOCKS Proxy
 ---
 
 Forward Proxy → Protects Clients
