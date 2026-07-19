@@ -32,6 +32,6 @@ This models is understanding us how data transport between hosts or host from an
 ## 3.Network
   - Routing . Forwarding packet . Transferring data from the sender to the receiver .
 ## 2.Data Link
-  - between swich and devide betstrem to frame and enable reliable and error-free transmissions
+  - between swich and devide bit stream to frame and enable reliable and error-free transmissions
 ## 1.Physical
   - Convert the data to  electrical signals
