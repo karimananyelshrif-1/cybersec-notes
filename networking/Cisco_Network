@@ -1,1 +1,345 @@
 
+# Cisco Remote Access — Telnet & SSH
+
+## 1. Basic Configuration
+
+```cisco
+enable
+! الانتقال من User EXEC إلى Privileged EXEC
+
+configure terminal
+! الدخول إلى Global Configuration Mode
+
+hostname Switch1
+! تغيير اسم الـSwitch
+
+hostname Router1
+! تغيير اسم الـRouter
+
+enable secret SConf
+! Password للـPrivileged EXEC على الـSwitch
+
+enable secret RConf
+! Password للـPrivileged EXEC على الـRouter
+```
+
+---
+
+## 2. Console Configuration
+
+### Switch
+
+```cisco
+line console 0
+! الدخول إلى إعدادات Console
+
+password Cisco
+! وضع Password للـConsole
+
+login
+! تفعيل طلب الـPassword
+
+exit
+! الخروج
+```
+
+### Router
+
+```cisco
+line console 0
+! الدخول إلى إعدادات Console
+
+password Rcisco
+! وضع Password للـConsole
+
+login
+! تفعيل طلب الـPassword
+
+exit
+! الخروج
+```
+
+---
+
+## 3. MOTD Banner
+
+```cisco
+banner motd #Authorized access only#
+! إنشاء رسالة تظهر عند الدخول إلى الجهاز
+```
+
+---
+
+## 4. Switch Management IP
+
+```cisco
+interface vlan 1
+! الدخول إلى VLAN 1 لاستخدامها كـManagement Interface
+
+ip address 192.168.1.5 255.255.255.0
+! وضع Management IP للـSwitch
+
+no shutdown
+! تشغيل الـInterface
+
+exit
+! الخروج
+
+ip default-gateway 192.168.1.1
+! تحديد الـDefault Gateway للـSwitch
+```
+
+---
+
+## 5. Router IP Configuration
+
+### GigabitEthernet 0/1
+
+```cisco
+interface gigabitEthernet 0/1
+! الدخول إلى Interface Gig0/1
+
+ip address 192.168.1.1 255.255.255.0
+! وضع IP Address وSubnet Mask
+
+no shutdown
+! تشغيل الـInterface
+
+exit
+! الخروج
+```
+
+### GigabitEthernet 0/0
+
+```cisco
+interface gigabitEthernet 0/0
+! الدخول إلى Interface Gig0/0
+
+ip address 192.168.2.1 255.255.255.0
+! وضع IP Address وSubnet Mask
+
+no shutdown
+! تشغيل الـInterface
+
+exit
+! الخروج
+```
+
+---
+
+# 6. Telnet
+
+## Configuration
+
+```cisco
+line vty 0 4
+! الدخول إلى خطوط VTY الخاصة بالـRemote Access
+
+password Cisco
+! وضع Password للـTelnet
+
+login
+! تفعيل طلب الـPassword
+
+transport input telnet
+! السماح باتصالات Telnet
+
+exit
+! الخروج من VTY Configuration
+```
+
+## Telnet Test
+
+من الـPC:
+
+```cmd
+telnet 192.168.1.5
+```
+
+ثم:
+
+```text
+Password: Cisco
+```
+
+بعد الدخول:
+
+```cisco
+enable
+```
+
+ثم:
+
+```text
+Password: SConf
+```
+
+---
+
+# 7. SSH
+
+## Hostname
+
+```cisco
+hostname Router1
+! تحديد اسم الـRouter
+```
+
+## Domain Name
+
+```cisco
+ip domain-name lab.local
+! تحديد Domain Name المستخدم مع SSH وRSA
+```
+
+## Local User
+
+```cisco
+username karim_anany secret cisco
+! إنشاء Local User باسم karim_anany وكلمة المرور cisco
+```
+
+## RSA Keys
+
+```cisco
+crypto key generate rsa
+! إنشاء RSA Keys التي يستخدمها SSH لتأمين الاتصال
+```
+
+عند ظهور:
+
+```text
+How many bits in the modulus [512]:
+```
+
+اضغط:
+
+```text
+Enter
+```
+
+لاستخدام القيمة الافتراضية.
+
+## VTY Configuration
+
+```cisco
+line vty 0 4
+! الدخول إلى خطوط VTY الخاصة بالـRemote Access
+
+login local
+! استخدام Local User Database للمصادقة
+
+transport input ssh
+! السماح باتصالات SSH
+
+exit
+! الخروج من VTY Configuration
+```
+
+---
+
+# 8. SSH Test
+
+من الـPC:
+
+```cmd
+ssh -l karim_anany 192.168.1.1
+```
+
+أدخل:
+
+```text
+Password: cisco
+```
+
+بعد الدخول:
+
+```text
+Router1>
+```
+
+للدخول إلى Privileged EXEC:
+
+```cisco
+enable
+```
+
+ثم:
+
+```text
+Password: RConf
+```
+
+والنتيجة:
+
+```text
+Router1#
+```
+
+---
+
+# 9. Verification Commands
+
+## Check Interfaces
+
+```cisco
+show ip interface brief
+! عرض الـInterfaces والـIP Address وحالتها
+```
+
+## Show Current Configuration
+
+```cisco
+show running-config
+! عرض الإعدادات الحالية الموجودة في RAM
+```
+
+## Save Configuration
+
+```cisco
+copy running-config startup-config
+! حفظ الإعدادات حتى لا تضيع بعد إعادة التشغيل
+```
+
+---
+
+# 10. Quick Reference
+
+## Telnet
+
+```cisco
+line vty 0 4
+password Cisco
+login
+transport input telnet
+```
+
+## SSH
+
+```cisco
+hostname Router1
+ip domain-name lab.local
+username karim_anany secret cisco
+crypto key generate rsa
+line vty 0 4
+login local
+transport input ssh
+```
+
+## Privileged EXEC
+
+```cisco
+enable secret RConf
+```
+
+## Telnet Test
+
+```cmd
+telnet 192.168.1.5
+```
+
+## SSH Test
+
+```cmd
+ssh -l karim_anany 192.168.1.1
+```
