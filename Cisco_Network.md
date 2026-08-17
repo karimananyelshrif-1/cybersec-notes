@@ -1,558 +1,318 @@
 # Cisco IOS Commands — Quick Revision
 
-A concise reference for common **Cisco IOS commands** used for basic device configuration, interface setup, remote access, verification, and connectivity testing.
+## 1. الدخول إلى أوضاع الجهاز
 
----
-
-## 1. Accessing Cisco IOS Modes
-
-```bash
 enable
-! Move from User EXEC Mode to Privileged EXEC Mode
+! الانتقال من User EXEC إلى Privileged EXEC
 
 configure terminal
-! Enter Global Configuration Mode
+! الدخول إلى Global Configuration Mode
 
 exit
-! Move back one level
+! الرجوع خطوة للخلف
 
 end
-! Return directly to Privileged EXEC Mode
-```
-
-### IOS Mode Flow
-
-```text
-User EXEC
-   │
-   └── enable
-          ↓
-Privileged EXEC
-   │
-   └── configure terminal
-          ↓
-Global Configuration
-   │
-   ├── interface ...
-   ├── line console 0
-   ├── line vty 0 4
-   └── ...
-```
+! الرجوع مباشرة إلى Privileged EXEC
 
 ---
 
 ## 2. Basic Device Configuration
 
-### Set Hostname
-
-```bash
 hostname Switch1
-! Set the hostname of the switch
+! تغيير اسم الـSwitch
 
 hostname Router1
-! Set the hostname of the router
-```
+! تغيير اسم الـRouter
 
-### Configure Privileged EXEC Password
-
-```bash
 enable secret SConf
-! Configure an encrypted password for Privileged EXEC Mode
-```
+! وضع Password مشفر للـPrivileged EXEC على الـSwitch
 
-> **Note:** Use an appropriate password for each device. `SConf` and `RConf` are examples only.
+enable secret RConf
+! وضع Password مشفر للـPrivileged EXEC على الـRouter
 
-### Configure MOTD Banner
-
-```bash
 banner motd #Authorized access only#
-! Display a message when users access the device
-```
+! إنشاء رسالة تظهر عند الدخول إلى الجهاز
+
+«ملاحظة: في التطبيق الفعلي تختار Password واحد مناسب لكل جهاز، ولا تضع "SConf" و"RConf" معًا على نفس الجهاز إلا لو كان ذلك مقصودًا.»
 
 ---
 
 ## 3. Console Password
 
-The console line controls local access through the physical console connection.
-
-```bash
 line console 0
-! Enter Console Line Configuration Mode
+! الدخول إلى إعدادات الـConsole
 
 password Cisco
-! Set the console password
+! وضع Password للـConsole
 
 login
-! Enable password authentication
+! تفعيل طلب الـPassword عند الدخول من الـConsole
 
 exit
-! Exit Console Line Configuration Mode
-```
-
-### Quick Configuration
-
-```bash
-line console 0
-password Cisco
-login
-exit
-```
+! الخروج من إعدادات الـConsole
 
 ---
 
 ## 4. Router Interface Configuration
 
-Configure an IP address and enable a router interface:
-
-```bash
 interface gigabitEthernet 0/0
-! Enter GigabitEthernet 0/0 Interface Configuration Mode
+! الدخول إلى Interface GigabitEthernet 0/0
 
 ip address IP MASK
-! Assign an IPv4 address and subnet mask
+! وضع IP Address وSubnet Mask
 
 no shutdown
-! Enable the interface
+! تشغيل الـInterface
 
 description ...
-! Add an optional description
+! إضافة وصف للـInterface
 
 exit
-! Exit Interface Configuration Mode
-```
+! الخروج من إعدادات الـInterface
 
-### Example
+مثال:
 
-```bash
 interface gigabitEthernet 0/0
 ip address 192.168.2.1 255.255.255.0
 no shutdown
 description LAN Interface
 exit
-```
-
-### Key Concept
-
-```text
-interface
-   ↓
-Assign IP Address
-   ↓
-no shutdown
-   ↓
-Optional Description
-```
 
 ---
 
 ## 5. Switch Management Interface — SVI
 
-An **SVI (Switched Virtual Interface)** can be used as the management interface of a Layer 2 switch.
-
-### Configuration
-
-```bash
 interface vlan 1
-! Enter VLAN 1 SVI Configuration Mode
+! الدخول إلى VLAN 1 لاستخدامها كـManagement Interface
 
 ip address 192.168.1.5 255.255.255.0
-! Assign a management IP address
+! وضع Management IP للسويتش
 
 no shutdown
-! Enable the SVI
+! تشغيل الـSVI
 
 exit
-! Exit Interface Configuration Mode
+! الخروج من إعدادات الـInterface
 
 ip default-gateway 192.168.1.1
-! Configure the default gateway for the switch
-```
+! تحديد الـDefault Gateway للسويتش
 
-### Example Network
+الفكرة:
 
-```text
-             PC
-              |
-        192.168.1.x
-              |
-           Switch
-      Management IP:
-        192.168.1.5
-              |
-           Router
-       Default Gateway:
-        192.168.1.1
-```
+PC
+ |
+ | 192.168.1.x
+ |
+Switch
+ | 192.168.1.5
+ |
+Router
+ | 192.168.1.1
 
-### Important Concept
-
-- `192.168.1.5` → **Management IP of the switch**
-- `192.168.1.1` → **Default Gateway of the switch**
-
-The switch uses the default gateway when it needs to communicate with a device outside its local subnet.
+الـ"192.168.1.5" هو IP إدارة السويتش، والـ"192.168.1.1" هو Default Gateway للسويتش.
 
 ---
 
-## 6. Example Router Configuration
+## 6. مثال Router Configuration
 
-A router can have multiple interfaces, with each interface belonging to a different network.
-
-```bash
 interface gigabitEthernet 0/1
-! Configure GigabitEthernet 0/1
+! الدخول إلى Gig0/1
 
 ip address 192.168.1.1 255.255.255.0
-! Assign an IP address
+! وضع IP Address وSubnet Mask
 
 no shutdown
-! Enable the interface
+! تشغيل الـInterface
 
 exit
-! Exit Interface Configuration Mode
+! الخروج
 
 interface gigabitEthernet 0/0
-! Configure GigabitEthernet 0/0
+! الدخول إلى Gig0/0
 
 ip address 192.168.2.1 255.255.255.0
-! Assign an IP address
+! وضع IP Address وSubnet Mask
 
 no shutdown
-! Enable the interface
+! تشغيل الـInterface
 
 exit
-! Exit Interface Configuration Mode
-```
-
-### Resulting Network
-
-```text
-Network 192.168.1.0/24
-        |
-       G0/1
-   192.168.1.1
-      Router
-   192.168.2.1
-       G0/0
-        |
-Network 192.168.2.0/24
-```
+! الخروج
 
 ---
 
 ## 7. Telnet Configuration
 
-**Telnet** provides remote CLI access through the VTY (Virtual Terminal) lines.
-
-> **Security Note:** Telnet is unencrypted. For real environments, **SSH is preferred**.
-
-### Configuration
-
-```bash
 line vty 0 4
-! Enter VTY Line Configuration Mode
+! الدخول إلى خطوط VTY الخاصة بالـRemote Access
 
 password Cisco
-! Set the VTY password
+! وضع Password للـTelnet
 
 login
-! Enable password authentication
+! جعل الـVTY تطلب الـPassword
 
 transport input telnet
-! Allow Telnet connections
+! السماح باتصالات Telnet
 
 exit
-! Exit VTY Configuration Mode
-```
+! الخروج من إعدادات VTY
 
-### Quick Configuration
+اختبار Telnet من الـPC:
 
-```bash
-line vty 0 4
-password Cisco
-login
-transport input telnet
-exit
-```
-
-### Test Telnet from a PC
-
-```bash
 telnet 192.168.1.5
-! Connect to the switch using Telnet
-```
+! الاتصال بالسويتش عبر Telnet
 
 ---
 
 ## 8. SSH Configuration
 
-**SSH (Secure Shell)** provides encrypted remote CLI access and is preferred over Telnet.
-
-### Step 1 — Configure Hostname
-
-```bash
 hostname Router1
-! Set the device hostname
-```
+! تحديد اسم الجهاز، ويجب أن يكون موجودًا قبل إنشاء RSA Keys
 
-### Step 2 — Configure Domain Name
-
-```bash
 ip domain-name lab.local
-! Configure the domain name required for RSA key generation
-```
+! تحديد Domain Name المستخدم مع SSH وRSA
 
-### Step 3 — Create a Local User
-
-```bash
 username karim_anany secret cisco
-! Create a local user with an encrypted password
-```
+! إنشاء Local User مع Password مشفر
 
-### Step 4 — Generate RSA Keys
-
-```bash
 crypto key generate rsa
-! Generate RSA keys used by SSH
-```
+! إنشاء RSA Keys التي يستخدمها SSH
 
-### Step 5 — Configure VTY Lines
-
-```bash
-line vty 0 4
-! Enter VTY Line Configuration Mode
-
-login local
-! Use the local username database for authentication
-
-transport input ssh
-! Allow SSH connections only
-
-exit
-! Exit VTY Configuration Mode
-```
-
-### Complete SSH Configuration
-
-```bash
-hostname Router1
-ip domain-name lab.local
-username karim_anany secret cisco
-crypto key generate rsa
+بعد ذلك:
 
 line vty 0 4
+! الدخول إلى خطوط VTY
+
 login local
+! استخدام Local User Database للمصادقة
+
 transport input ssh
+! السماح باتصالات SSH فقط
+
 exit
-```
+! الخروج
 
-### Test SSH from a PC
+اختبار SSH من الـPC:
 
-```bash
 ssh -l karim_anany 192.168.1.1
-! Connect to the router using SSH with the specified username
-```
+! الاتصال بالـRouter عبر SSH باستخدام Username محدد
 
-After authentication:
+بعد الدخول:
 
-```bash
 enable
-! Enter Privileged EXEC Mode
-```
+! الانتقال إلى Privileged EXEC
 
-> The password requested after `enable` is the password configured with `enable secret`.
+! Password هنا هو Password الـenable secret
 
 ---
 
 ## 9. Verification Commands
 
-Verification commands are used to inspect the current state and configuration of the device.
-
-### Check Interface Status
-
-```bash
 show ip interface brief
-! Display interfaces, IP addresses, and their current status
-```
+! أسرع أمر لفحص الـInterfaces والـIP Address وحالتها
 
-> One of the fastest commands for checking interface status.
-
-### Display Detailed Interface Information
-
-```bash
 show interfaces
-! Display detailed information about interfaces
-```
+! عرض تفاصيل كاملة عن الـInterfaces
 
-### Display Interface Descriptions
-
-```bash
 show interfaces description
-! Display interface descriptions and operational status
-```
+! عرض الـInterfaces والـDescriptions وحالتها
 
-### Display Routing Table
-
-```bash
 show ip route
-! Display the IPv4 routing table
-```
+! عرض Routing Table
 
-### Display Running Configuration
-
-```bash
 show running-config
-! Display the current configuration stored in RAM
-```
+! عرض الـConfiguration الحالية الموجودة في RAM
 
 ---
 
 ## 10. Connectivity Testing
 
-Use `ping` to test network connectivity using **ICMP**.
-
-```bash
 ping IP
-! Test connectivity to another device
-```
+! اختبار الاتصال بجهاز آخر باستخدام ICMP
 
-### Example
+مثال:
 
-```bash
 ping 192.168.1.1
-! Test connectivity to the router
-```
+! اختبار الاتصال بالـRouter
 
 ---
 
 ## 11. Save Configuration
 
-Cisco IOS maintains configuration in two important locations:
+copy running-config startup-config
+! حفظ الـConfiguration الحالية حتى لا تضيع بعد Restart
 
-```text
+مهم جدًا:
+
 running-config
-    ↓
-Current configuration stored in RAM
+= Configuration الحالية في RAM
 
 startup-config
-    ↓
-Saved configuration stored in NVRAM
-```
-
-### Save Running Configuration
-
-```bash
-copy running-config startup-config
-! Save the current configuration to NVRAM
-```
-
-Alternative:
-
-```bash
-write
-! Save the current configuration
-```
-
-> **Important:** If the configuration is not saved to `startup-config`, changes in `running-config` may be lost after a device restart.
+= Configuration المحفوظة في NVRAM
 
 ---
 
 ## 12. PC IP Configuration
 
-On a Windows PC:
+على Windows PC:
 
-```cmd
 ipconfig
-! Display the PC's IP address, subnet mask, and default gateway
-```
-
-For more detailed information:
-
-```cmd
-ipconfig /all
-! Display detailed network configuration
-```
+! عرض IP Address وSubnet Mask وDefault Gateway على الـPC
 
 ---
 
-# 13. Quick Revision Cheat Sheet
+## 13. أهم أوامر المراجعة السريعة
 
-## Interface Configuration
+Interface
 
-```bash
 interface g0/0
 ip address IP MASK
 no shutdown
 description ...
 exit
-```
 
-**Concept:**
-
-```text
-Enter Interface
-      ↓
-Assign IP Address
-      ↓
-Enable Interface
-      ↓
-Add Description (Optional)
-      ↓
-Exit
-```
+الفكرة: تدخل على الـInterface → تضع IP → تشغله → تضيف Description اختياريًا.
 
 ---
 
-## Switch Management — SVI
+Switch Management
 
-```bash
 interface vlan 1
 ip address 192.168.1.5 255.255.255.0
 no shutdown
 exit
 ip default-gateway 192.168.1.1
-```
 
-**Concept:**
-
-```text
-Management IP   → 192.168.1.5
-Default Gateway → 192.168.1.1
-```
+الفكرة: تعطي السويتش Management IP وتحدد الـGateway.
 
 ---
 
-## Console Access
+Console
 
-```bash
 line console 0
 password Cisco
 login
 exit
-```
 
-**Purpose:** Configure password authentication for console access.
+الفكرة: Password للدخول من Console.
 
 ---
 
-## Telnet
+Telnet
 
-```bash
 line vty 0 4
 password Cisco
 login
 transport input telnet
 exit
-```
 
-**Purpose:** Allow remote CLI access using Telnet.
-
-> Telnet is unencrypted. Use SSH whenever possible.
+الفكرة: السماح بالدخول Remote باستخدام Telnet.
 
 ---
 
-## SSH
+SSH
 
-```bash
 hostname Router1
 ip domain-name lab.local
 username karim_anany secret cisco
@@ -562,62 +322,33 @@ line vty 0 4
 login local
 transport input ssh
 exit
-```
 
-**Concept:**
-
-```text
-Hostname
-   ↓
-Domain Name
-   ↓
-Local User
-   ↓
-RSA Keys
-   ↓
-VTY Configuration
-   ↓
-Local Authentication
-   ↓
-SSH Access
-```
+الفكرة: إنشاء User + RSA Keys ثم جعل الـVTY تستخدم Local Authentication والسماح بـSSH.
 
 ---
 
-## Verification
+Verification
 
-```bash
 show ip interface brief
 show interfaces
 show interfaces description
 show ip route
 show running-config
-```
 
-**Purpose:** Check interfaces, IP addresses, interface descriptions, routing, and current configuration.
+الفكرة: فحص الـInterfaces والـIP والـRouting والـConfiguration.
 
 ---
 
-## Connectivity
+Testing
 
-```bash
 ping IP
-```
 
-**Purpose:** Test network connectivity using ICMP.
+الفكرة: اختبار الـConnectivity.
 
 ---
 
-## Save Configuration
-
-```bash
+Save
+write او
 copy running-config startup-config
-```
 
-or:
-
-```bash
-write
-```
-
-**Purpose:** Save the current configuration so it persists after a restart.
+الفكرة: حفظ الإعدادات بعد الانتهاء
