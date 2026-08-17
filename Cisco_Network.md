@@ -1,104 +1,117 @@
 # Cisco IOS Commands — Quick Revision
 
-## 1. الدخول إلى أوضاع الجهاز
+## 1. Device Modes
 
+```bash
 enable
-! الانتقال من User EXEC إلى Privileged EXEC
+! Go from User EXEC to Privileged EXEC
 
 configure terminal
-! الدخول إلى Global Configuration Mode
+! Enter Global Configuration Mode
 
 exit
-! الرجوع خطوة للخلف
+! Go back one step
 
 end
-! الرجوع مباشرة إلى Privileged EXEC
+! Go directly to Privileged EXEC
+```
 
 ---
 
 ## 2. Basic Device Configuration
 
+```bash
 hostname Switch1
-! تغيير اسم الـSwitch
+! Set the Switch hostname
 
 hostname Router1
-! تغيير اسم الـRouter
+! Set the Router hostname
 
 enable secret SConf
-! وضع Password مشفر للـPrivileged EXEC على الـSwitch
+! Set an encrypted password for Privileged EXEC on the Switch
 
 enable secret RConf
-! وضع Password مشفر للـPrivileged EXEC على الـRouter
+! Set an encrypted password for Privileged EXEC on the Router
 
 banner motd #Authorized access only#
-! إنشاء رسالة تظهر عند الدخول إلى الجهاز
+! Show a message when accessing the device
+```
 
-«ملاحظة: في التطبيق الفعلي تختار Password واحد مناسب لكل جهاز، ولا تضع "SConf" و"RConf" معًا على نفس الجهاز إلا لو كان ذلك مقصودًا.»
+**Note:** Use one suitable password for each device. Do not use `SConf` and `RConf` on the same device unless needed.
 
 ---
 
 ## 3. Console Password
 
+```bash
 line console 0
-! الدخول إلى إعدادات الـConsole
+! Enter Console settings
 
 password Cisco
-! وضع Password للـConsole
+! Set the Console password
 
 login
-! تفعيل طلب الـPassword عند الدخول من الـConsole
+! Enable password login
 
 exit
-! الخروج من إعدادات الـConsole
+! Exit Console settings
+```
 
 ---
 
 ## 4. Router Interface Configuration
 
+```bash
 interface gigabitEthernet 0/0
-! الدخول إلى Interface GigabitEthernet 0/0
+! Enter GigabitEthernet 0/0
 
 ip address IP MASK
-! وضع IP Address وSubnet Mask
+! Set IP Address and Subnet Mask
 
 no shutdown
-! تشغيل الـInterface
+! Turn on the Interface
 
 description ...
-! إضافة وصف للـInterface
+! Add a description
 
 exit
-! الخروج من إعدادات الـInterface
+! Exit Interface settings
+```
 
-مثال:
+### Example
 
+```bash
 interface gigabitEthernet 0/0
 ip address 192.168.2.1 255.255.255.0
 no shutdown
 description LAN Interface
 exit
+```
 
 ---
 
 ## 5. Switch Management Interface — SVI
 
+```bash
 interface vlan 1
-! الدخول إلى VLAN 1 لاستخدامها كـManagement Interface
+! Enter VLAN 1 for Management
 
 ip address 192.168.1.5 255.255.255.0
-! وضع Management IP للسويتش
+! Set the Management IP
 
 no shutdown
-! تشغيل الـSVI
+! Turn on the SVI
 
 exit
-! الخروج من إعدادات الـInterface
+! Exit Interface settings
 
 ip default-gateway 192.168.1.1
-! تحديد الـDefault Gateway للسويتش
+! Set the Switch Default Gateway
+```
 
-الفكرة:
+### Idea
 
+```text
 PC
  |
  | 192.168.1.x
@@ -108,211 +121,249 @@ Switch
  |
 Router
  | 192.168.1.1
+```
 
-الـ"192.168.1.5" هو IP إدارة السويتش، والـ"192.168.1.1" هو Default Gateway للسويتش.
+`192.168.1.5` = Switch Management IP
+
+`192.168.1.1` = Switch Default Gateway
 
 ---
 
-## 6. مثال Router Configuration
+## 6. Router Configuration Example
 
+```bash
 interface gigabitEthernet 0/1
-! الدخول إلى Gig0/1
+! Enter Gig0/1
 
 ip address 192.168.1.1 255.255.255.0
-! وضع IP Address وSubnet Mask
+! Set IP Address and Subnet Mask
 
 no shutdown
-! تشغيل الـInterface
+! Turn on the Interface
 
 exit
-! الخروج
+! Exit
 
 interface gigabitEthernet 0/0
-! الدخول إلى Gig0/0
+! Enter Gig0/0
 
 ip address 192.168.2.1 255.255.255.0
-! وضع IP Address وSubnet Mask
+! Set IP Address and Subnet Mask
 
 no shutdown
-! تشغيل الـInterface
+! Turn on the Interface
 
 exit
-! الخروج
+! Exit
+```
 
 ---
 
 ## 7. Telnet Configuration
 
+```bash
 line vty 0 4
-! الدخول إلى خطوط VTY الخاصة بالـRemote Access
+! Enter VTY lines for Remote Access
 
 password Cisco
-! وضع Password للـTelnet
+! Set the Telnet password
 
 login
-! جعل الـVTY تطلب الـPassword
+! Enable password login
 
 transport input telnet
-! السماح باتصالات Telnet
+! Allow Telnet connections
 
 exit
-! الخروج من إعدادات VTY
+! Exit VTY settings
+```
 
-اختبار Telnet من الـPC:
+### Test Telnet from PC
 
+```bash
 telnet 192.168.1.5
-! الاتصال بالسويتش عبر Telnet
+! Connect to the Switch using Telnet
+```
 
 ---
 
 ## 8. SSH Configuration
 
+```bash
 hostname Router1
-! تحديد اسم الجهاز، ويجب أن يكون موجودًا قبل إنشاء RSA Keys
+! Set the hostname before creating RSA Keys
 
 ip domain-name lab.local
-! تحديد Domain Name المستخدم مع SSH وRSA
+! Set the Domain Name for SSH and RSA
 
 username karim_anany secret cisco
-! إنشاء Local User مع Password مشفر
+! Create a Local User with an encrypted password
 
 crypto key generate rsa
-! إنشاء RSA Keys التي يستخدمها SSH
+! Generate RSA Keys for SSH
+```
 
-بعد ذلك:
+### Then
 
+```bash
 line vty 0 4
-! الدخول إلى خطوط VTY
+! Enter VTY lines
 
 login local
-! استخدام Local User Database للمصادقة
+! Use the Local User Database
 
 transport input ssh
-! السماح باتصالات SSH فقط
+! Allow SSH connections only
 
 exit
-! الخروج
+! Exit VTY settings
+```
 
-اختبار SSH من الـPC:
+### Test SSH from PC
 
+```bash
 ssh -l karim_anany 192.168.1.1
-! الاتصال بالـRouter عبر SSH باستخدام Username محدد
+! Connect to the Router using the username
+```
 
-بعد الدخول:
+### After Login
 
+```bash
 enable
-! الانتقال إلى Privileged EXEC
+! Go to Privileged EXEC
 
-! Password هنا هو Password الـenable secret
+! The password is the enable secret password
+```
 
 ---
 
 ## 9. Verification Commands
 
+```bash
 show ip interface brief
-! أسرع أمر لفحص الـInterfaces والـIP Address وحالتها
+! Quickly check Interfaces, IPs, and their status
 
 show interfaces
-! عرض تفاصيل كاملة عن الـInterfaces
+! Show detailed Interface information
 
 show interfaces description
-! عرض الـInterfaces والـDescriptions وحالتها
+! Show Interfaces, descriptions, and status
 
 show ip route
-! عرض Routing Table
+! Show the Routing Table
 
 show running-config
-! عرض الـConfiguration الحالية الموجودة في RAM
+! Show the current Configuration in RAM
+```
 
 ---
 
 ## 10. Connectivity Testing
 
+```bash
 ping IP
-! اختبار الاتصال بجهاز آخر باستخدام ICMP
+! Test connectivity using ICMP
+```
 
-مثال:
+### Example
 
+```bash
 ping 192.168.1.1
-! اختبار الاتصال بالـRouter
+! Test connectivity to the Router
+```
 
 ---
 
 ## 11. Save Configuration
 
+```bash
 copy running-config startup-config
-! حفظ الـConfiguration الحالية حتى لا تضيع بعد Restart
+! Save the current Configuration
+```
 
-مهم جدًا:
+### Important
 
+```text
 running-config
-= Configuration الحالية في RAM
+= Current Configuration in RAM
 
 startup-config
-= Configuration المحفوظة في NVRAM
+= Saved Configuration in NVRAM
+```
 
 ---
 
 ## 12. PC IP Configuration
 
-على Windows PC:
+### Windows PC
 
+```bash
 ipconfig
-! عرض IP Address وSubnet Mask وDefault Gateway على الـPC
+! Show IP Address, Subnet Mask, and Default Gateway
+```
 
 ---
 
-## 13. أهم أوامر المراجعة السريعة
+## 13. Quick Review
 
-Interface
+### Interface
 
+```bash
 interface g0/0
 ip address IP MASK
 no shutdown
 description ...
 exit
+```
 
-الفكرة: تدخل على الـInterface → تضع IP → تشغله → تضيف Description اختياريًا.
+**Idea:** Enter Interface → Set IP → Turn it on → Add Description.
 
 ---
 
-Switch Management
+### Switch Management
 
+```bash
 interface vlan 1
 ip address 192.168.1.5 255.255.255.0
 no shutdown
 exit
 ip default-gateway 192.168.1.1
+```
 
-الفكرة: تعطي السويتش Management IP وتحدد الـGateway.
+**Idea:** Set the Switch Management IP and Gateway.
 
 ---
 
-Console
+### Console
 
+```bash
 line console 0
 password Cisco
 login
 exit
+```
 
-الفكرة: Password للدخول من Console.
+**Idea:** Set a password for Console access.
 
 ---
 
-Telnet
+### Telnet
 
+```bash
 line vty 0 4
 password Cisco
 login
 transport input telnet
 exit
+```
 
-الفكرة: السماح بالدخول Remote باستخدام Telnet.
+**Idea:** Allow Remote Access using Telnet.
 
 ---
 
-SSH
+### SSH
 
+```bash
 hostname Router1
 ip domain-name lab.local
 username karim_anany secret cisco
@@ -322,33 +373,47 @@ line vty 0 4
 login local
 transport input ssh
 exit
+```
 
-الفكرة: إنشاء User + RSA Keys ثم جعل الـVTY تستخدم Local Authentication والسماح بـSSH.
+**Idea:** Create User + RSA Keys → Use Local Authentication → Allow SSH.
 
 ---
 
-Verification
+### Verification
 
+```bash
 show ip interface brief
 show interfaces
 show interfaces description
 show ip route
 show running-config
+```
 
-الفكرة: فحص الـInterfaces والـIP والـRouting والـConfiguration.
+**Idea:** Check Interfaces, IPs, Routing, and Configuration.
 
 ---
 
-Testing
+### Testing
 
+```bash
 ping IP
+```
 
-الفكرة: اختبار الـConnectivity.
+**Idea:** Test Connectivity.
 
 ---
 
-Save
-write او
-copy running-config startup-config
+### Save
 
-الفكرة: حفظ الإعدادات بعد الانتهاء
+```bash
+write
+```
+
+or
+
+```bash
+copy running-config startup-config
+```
+
+**Idea:** Save the Configuration.
+
