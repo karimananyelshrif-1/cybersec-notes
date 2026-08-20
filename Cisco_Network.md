@@ -417,3 +417,153 @@ copy running-config startup-config
 
 **Idea:** Save the Configuration.
 
+
+
+## 2. إنشاء الـ VLANs على SW1
+ 
+```
+enable
+configure terminal
+vlan 10
+ name VLAN10
+exit
+vlan 20
+ name VLAN20
+exit
+vlan 30
+ name VLAN30
+exit
+```
+على **SW**:
+```
+interface range FastEthernet0/1-2
+ switchport mode access
+ switchport access vlan 10
+exit
+ 
+
+interface FastEthernet0/3
+ switchport mode access
+ switchport access vlan 30
+exit
+ 
+interface FastEthernet0/4
+ switchport mode access
+ switchport access vlan 30
+exit
+```
+على **SW2**:
+```
+vlan 10
+vlan 20
+vlan 30
+exit
+ 
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 20
+exit
+ 
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 10
+exit
+ 
+interface FastEthernet0/3
+ switchport mode access
+ switchport access vlan 10
+exit
+```
+ 
+---
+ 
+## 5. عمل الـ Trunk بين SW1 و SW2 (عشان الـ VLANs تعدي بين السويتشين)
+ 
+على **SW1**:
+```
+interface GigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30
+ no shutdown
+exit
+```
+على **SW2** (نفس الشيء على البورت المتوصل بـ SW1):
+```
+interface GigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30
+ no shutdown
+exit
+```
+## 7. الإعداد جوه الراوتر (Router-on-a-Stick)
+ 
+```
+enable
+configure terminal
+ 
+interface GigabitEthernet0/0
+ no shutdown
+exit
+ 
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 10.0.0.62 255.255.255.192
+exit
+ 
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 10.0.0.126 255.255.255.192
+exit
+ 
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 10.0.0.190 255.255.255.192
+exit
+```
+## 6. عمل الترانك بين SW2 والراوتر (أو الـ Multilayer Switch)
+ 
+على **SW2**، البورت المتوصل بالراوتر لازم يبقى Trunk برضه عشان ينقل الـ 3 VLANs في كابل واحد:
+```
+interface FastEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30
+ no shutdown
+exit
+```
+## 8. البديل: الإعداد جوه الـ Multilayer Switch بدل الراوتر
+ 
+لو حذفنا الراوتر وحطينا مكانه Multilayer Switch:
+ 
+```
+enable
+configure terminal
+ 
+ip routing
+ 
+vlan 10
+vlan 20
+vlan 30
+exit
+ 
+interface FastEthernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30
+ no shutdown
+exit
+ 
+interface vlan 10
+ ip address 10.0.0.62 255.255.255.192
+ no shutdown
+exit
+ 
+interface vlan 20
+ ip address 10.0.0.126 255.255.255.192
+ no shutdown
+exit
+ 
+interface vlan 30
+ ip address 10.0.0.190 255.255.255.192
+ no shutdown
+exit
+```
